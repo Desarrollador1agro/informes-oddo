@@ -1,0 +1,25 @@
+BUSCAR,ESTADO_PRODUCTO,ESTADO_KIT,GRUPO,CODIGO_PRODUCTO,PRODUCTO,CANTIDAD,COSTO_ESTANDAR,PRECIO_PUBLICACION,LISTA_MATERIAL_CANTIDAD   
+
+
+********************************************
+
+select pt.id as buscar,
+(case when pt.active='true' then 'producto activo' 
+else (case when pt.active='false' then 'producto inactivo' else '' end) end) AS estado_produc,
+(case when pt.kit_ok='true' then 'kit_activo' else (case when pt.kit_ok='false'
+then 'kit_inactivo' else '' end) end) AS estado_kit,
+left(cast(pc.name as varchar),3) as grupo,
+pp.default_code as cod_producto,
+pp.name_template as producto,
+sq.qty as cantidad,
+pp.costo_standard as cost_estandar,
+pt.list_price as preci_publi,mbl.product_qty as lis_mat_cant
+from stock_quant sq
+right join product_product AS pp ON sq.product_id=pp.id
+left join product_template AS pt ON pp.product_tmpl_id=pt.id
+left join  mrp_bom AS mb ON mb.product_tmpl_id=pt.id
+left join product_list_item AS pli ON pli.product_id=pp.id
+left join product_category AS pc ON pc.id=pli.categ_id
+left join mrp_bom_line as mbl on mb.id=mbl.bom_id
+where pt.kit_ok in ('true','false')
+limit (1000)

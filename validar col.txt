@@ -1,0 +1,4 @@
+validar columnas 
+
+
+select * from information_schema.columns  where table_name = 'product_template' and column_name like '%product%'
